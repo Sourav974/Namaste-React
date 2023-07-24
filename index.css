@@ -46,6 +46,15 @@
   width: 100%;
 }
 
-.search-container{
+.search-container {
   margin: 10px;
+}
+
+.Shimmer {
+  width: 200px;
+}
+
+.user-card {
+  padding: 10px;
+  border: 1px solid black;
 }
