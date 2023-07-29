@@ -1,41 +1,49 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import Shimmer from "./Shimmer";
 import { useParams } from "react-router-dom";
+import { MENU_API } from "../utils/constant";
 
 const RestaurantMenu = () => {
-  const [restaurants, setRestaurants] = useState([{}]);
-  const [resmenu, setResMenu] = useState([{}]);
+  const [resInfo, setResInfo] = useState(null);
+  const { resId } = useParams();
+  // console.log("Params", params);
 
   useEffect(() => {
-    getRestaurantsID();
+    fetchMenu();
   }, []);
-  // const { id, name, avgRating, cloudinaryImageId, city, costForTwoMessage } =
-  //   restaurants;
 
-  // how to read the dynamic url
-  const { resid } = useParams();
-  // console.log(param);
+  const fetchMenu = async () => {
+    const data = await fetch(MENU_API + resId);
 
-  async function getRestaurantsID() {
-    const data = await fetch(
-      "https://www.swiggy.com/dapi/menu/pI?page-type=REGULAR_MENU&complete-menu=true&lat=30.3164945&ng=78.03219179999999&restaurantid=" +
-        "resid" +
-        "&submitAction=ENTER"
-      // "https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=23.022505&lng=72.5713621&restaurantId=" +
-      //   resid +
-      //   "&submitAction=ENTER"
-    );
     const json = await data.json();
-    console.log("data", json);
-    setRestaurants(json.data?.cards[0]?.card?.card?.info); //47589
-    console.log("restaurants", restaurants);
-    setResMenu(json.data?.cards[2]);
-    // console.log(resmenu);
-  }
 
+    setResInfo(json.data);
+  };
+  console.log("res Info", resInfo);
+
+  if (resInfo === null) return <Shimmer />;
+
+  const { name, cuisines, costForTwoMessage } =
+    resInfo?.cards[0]?.card?.card?.info || {};
+
+  const { itemCards } =
+    resInfo?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards[2]?.card?.card;
   return (
-    <div>
-      <h1>Restaurant id: {resid}</h1>
-      {/* <h2>{restaurant.name}</h2> */}
+    <div className="menu">
+      <h1>{name}</h1>
+      <p>
+        {cuisines.join(",")} - {costForTwoMessage}
+      </p>
+      <h2>Menu</h2>
+      <ul>
+        {itemCards?.map((item) => (
+          <li key={item?.card?.info?.id}>
+            {item?.card?.info?.name} -{" Rs."}
+            {item?.card?.info?.price / 100 ||
+              item?.card?.info?.defaultPrice / 100}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

@@ -9,6 +9,7 @@ import Error from "./components/Error";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import RestaurantMenu from "./components/RestaurantMenu";
+import Practice from "./components/Practice";
 
 const AppLayout = () => {
   console.log(<Body />);
@@ -26,7 +27,7 @@ const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
-    errorElement: <Error />,
+
     children: [
       {
         path: "/",
@@ -41,10 +42,15 @@ const appRouter = createBrowserRouter([
         element: <Contact />,
       },
       {
-        path: "/restaurant/:id",
+        path: "/restaurants/:resId",
         element: <RestaurantMenu />,
       },
+      {
+        path: "/practice",
+        element: <Practice />,
+      },
     ],
+    errorElement: <Error />,
   },
 
   // {

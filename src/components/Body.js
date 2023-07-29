@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-import restrautList from "../utils/mockData";
+import { Link } from "react-router-dom";
 import RestaurantCard from "./RestaurantCard";
 import Shimmer from "./Shimmer";
 
 function filterData(searchText, allRestaurants) {
   const data = allRestaurants.filter((restaurant) =>
-    restaurant?.data?.name?.toLowerCase().includes(searchText.toLowerCase())
+    restaurant.info.name.toLowerCase().includes(searchText.toLowerCase())
   );
   return data;
 }
@@ -25,8 +25,12 @@ const Body = () => {
       "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9351929&lng=77.62448069999999&page_type=DESKTOP_WEB_LISTING"
     );
     const json = await data.json();
-    setAllRestaurants(json?.data?.cards[2]?.data?.data?.cards);
-    setFilteredRestaurants(json?.data?.cards[2]?.data?.data?.cards);
+    setAllRestaurants(
+      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
+    setFilteredRestaurants(
+      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
     console.log(json);
   }
 
@@ -37,6 +41,10 @@ const Body = () => {
   // if (filteredRestaurants?.length === 0)
   //   return <h1>No Restraunt match your Filter!!</h1>;
 
+  if (allRestaurants.length === 0) {
+    return <Shimmer />;
+  }
+
   return allRestaurants.length === 0 ? (
     <Shimmer />
   ) : (
@@ -45,8 +53,8 @@ const Body = () => {
         <button
           className="filter-btn"
           onClick={() => {
-            filetredList = allRestaurants.filter(
-              (res) => res.data.avgRating >= 4.0
+            const filetredList = allRestaurants.filter(
+              (res) => res.info.avgRating > 4
             );
             setFilteredRestaurants(filetredList);
             console.log("filetredList", filetredList);
@@ -78,8 +86,13 @@ const Body = () => {
       </div>
 
       <div className="res-container">
-        {filteredRestaurants.map((restraut) => (
-          <RestaurantCard key={restraut.data.id} resData={restraut} />
+        {filteredRestaurants.map((restaurant) => (
+          <Link
+            key={restaurant?.info.id}
+            to={"restaurants/" + restaurant?.info.id}
+          >
+            <RestaurantCard resData={restaurant?.info} />
+          </Link>
         ))}
       </div>
     </div>
