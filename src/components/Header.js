@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
 import { LOGO_URL } from "../utils/constant";
 import { Link } from "react-router-dom";
+import useOnlineStatus from "../utils/useOnlineStatus";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    console.log("useEffect");
-  }, []);
-
-  console.log("Render");
+  const onlineStatus = useOnlineStatus();
 
   return (
     <div className="header">
@@ -19,21 +16,25 @@ const Header = () => {
 
       <div className="nav-items">
         <ul>
-          <Link to="/">
-            <li>Home</li>
-          </Link>
+          <li>Status: {onlineStatus ? "✅" : "🔴"}</li>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
 
-          <Link to="/about">
-            <li>About Us</li>
-          </Link>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
 
-          <Link to="/Contact">
-            <li>Contact Us</li>
-          </Link>
+          <li>
+            <Link to="/contact">Contact</Link>
+          </li>
+          <li>
+            <Link to="/grocery">Grocery</Link>
+          </li>
 
-          <Link to="/Cart">
-            <li>Cart</li>
-          </Link>
+          <li>
+            <Link to="/cart">Cart</Link>
+          </li>
         </ul>
       </div>
       {isLoggedIn ? (
