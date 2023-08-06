@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { LOGO_URL } from "../utils/constant";
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
+import UserContext from "../utils/UserContext";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const { loggedInUser } = useContext(UserContext);
+  console.log("UserContext", loggedInUser);
 
   const onlineStatus = useOnlineStatus();
 
@@ -35,6 +39,7 @@ const Header = () => {
           <li className="px-4">
             <Link to="/cart">Cart</Link>
           </li>
+          <li className="px-4 font-bold">{loggedInUser}</li>
         </ul>
       </div>
       {isLoggedIn ? (

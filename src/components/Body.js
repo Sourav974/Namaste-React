@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
-import RestaurantCard from "./RestaurantCard";
+import RestaurantCard, { withPromotedLabel } from "./RestaurantCard";
 import Shimmer from "./Shimmer";
+import UserContext from "../utils/UserContext";
 
 function filterData(searchText, allRestaurants) {
   const data = allRestaurants.filter((restaurant) =>
@@ -16,6 +17,12 @@ const Body = () => {
   const [allRestaurants, setAllRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [searchText, setSearchText] = useState("");
+
+  const GoodRating = withPromotedLabel(RestaurantCard);
+
+  console.log("allRestaurants", allRestaurants);
+
+  const { loggedInUser, setUserName } = useContext(UserContext);
 
   useEffect(() => {
     Swiggy();
@@ -91,16 +98,25 @@ const Body = () => {
           >
             Top Rated Restaurants
           </button>
+          <input
+            className=" border border-black"
+            value={loggedInUser}
+            onChange={(e) => setUserName(e.target.value)}
+          />
         </div>
       </div>
 
       <div className="flex flex-wrap">
-        {filteredRestaurants.map((restaurant) => (
+        {filteredRestaurants?.map((restaurant) => (
           <Link
-            key={restaurant?.info.id}
-            to={"restaurants/" + restaurant?.info.id}
+            key={restaurant?.info?.id}
+            to={"restaurants/" + restaurant?.info?.id}
           >
-            <RestaurantCard resData={restaurant?.info} />
+            {restaurant?.info?.avgRating > 4 ? (
+              <GoodRating resData={restaurant?.info} />
+            ) : (
+              <RestaurantCard resData={restaurant?.info} />
+            )}
           </Link>
         ))}
       </div>

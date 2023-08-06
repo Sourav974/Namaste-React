@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { CDN_URL } from "../utils/constant";
+import UserContext from "../utils/UserContext";
 
 const RestaurantCard = (props) => {
   const { resData } = props;
+  const { loggedInUser } = useContext(UserContext);
+  console.log("from card context", loggedInUser);
 
   const {
     cloudinaryImageId,
@@ -18,10 +21,26 @@ const RestaurantCard = (props) => {
       <h2 className="font-bold py-4 text-lg">{name}</h2>
       <h3>{cuisines.join(", ")}</h3>
       <h4>{avgRating} stars</h4>
-      <h4>{costForTwo / 100} For Two</h4>
+      <h4>{costForTwo} For Two</h4>
       <h4>{deliveryTime}</h4>
+      <h4>User: {loggedInUser}</h4>
     </div>
   );
+};
+
+// High Order Component
+
+export const withPromotedLabel = (RestaurantCard) => {
+  return (props) => {
+    return (
+      <div>
+        <label className="absolute bg-black text-white m-2 p-2 rounded-lg ">
+          Good Rating
+        </label>
+        <RestaurantCard {...props} />
+      </div>
+    );
+  };
 };
 
 export default RestaurantCard;
